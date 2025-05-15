@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>부족한 역량 키우기 검사</title>
+  <style>
+    body { font-family: sans-serif; max-width: 700px; margin: auto; padding: 20px; line-height: 1.6; }
+    h1, h2 { color: #2c3e50; }
+    .question { margin-top: 20px; }
+    button { margin-top: 10px; padding: 8px 16px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <h1>부족한 역량 키우기 검사</h1>
+  <div id="app"></div>
+
+  <script>
+    const mbtiQuestions = [
+      ["사람들과 함께 있을 때 에너지가 난다", "E", "I"],
+      ["혼자 있는 시간이 편안하게 느껴진다", "I", "E"],
+      ["여러 사람과 어울리는 활동을 좋아한다", "E", "I"],
+      ["혼자 조용히 책 읽는 시간을 즐긴다", "I", "E"],
+      ["다른 사람과 쉽게 친해지는 편이다", "E", "I"],
+      ["처음 보는 사람과 이야기하기 어렵다", "I", "E"],
+      ["여러 사람과 함께 있으면 기운이 난다", "E", "I"],
+      ["혼자 집중하는 활동을 더 선호한다", "I", "E"],
+      ["모임이나 행사를 주도하는 것이 좋다", "E", "I"],
+      ["사람 많은 곳보다 조용한 장소를 선호한다", "I", "E"],
+      ["사실에 근거한 설명이 더 이해하기 쉽다", "S", "N"],
+      ["아이디어나 상상에 몰입하는 것을 좋아한다", "N", "S"],
+      ["경험을 중요하게 생각한다", "S", "N"],
+      ["보이지 않는 의미를 찾는 데 관심이 많다", "N", "S"],
+      ["실제 사례가 있는 것이 믿음이 간다", "S", "N"],
+      ["미래 가능성을 생각하는 것을 좋아한다", "N", "S"],
+      ["세부적인 사항을 잘 기억한다", "S", "N"],
+      ["직관적으로 무언가를 느끼는 편이다", "N", "S"],
+      ["현실적인 방법을 선호한다", "S", "N"],
+      ["상징과 은유를 사용하는 것을 즐긴다", "N", "S"],
+      ["논리적인 분석이 중요하다고 생각한다", "T", "F"],
+      ["다른 사람의 감정을 잘 이해하는 편이다", "F", "T"],
+      ["결정할 때 이성적으로 판단한다", "T", "F"],
+      ["사람의 마음을 먼저 고려하는 편이다", "F", "T"],
+      ["문제를 해결할 때 원인 분석을 중요시한다", "T", "F"],
+      ["갈등 상황에서 상대의 기분을 먼저 생각한다", "F", "T"],
+      ["정답이 있는 문제를 선호한다", "T", "F"],
+      ["다른 사람을 도우면 기분이 좋다", "F", "T"],
+      ["비판적으로 생각하는 편이다", "T", "F"],
+      ["남의 입장에서 공감하려고 노력한다", "F", "T"],
+      ["계획을 세우고 지키는 편이다", "J", "P"],
+      ["즉흥적인 활동을 좋아한다", "P", "J"],
+      ["정리 정돈이 잘 되어 있어야 집중된다", "J", "P"],
+      ["상황에 따라 유연하게 움직인다", "P", "J"],
+      ["계획된 스케줄이 안정감을 준다", "J", "P"],
+      ["갑작스러운 변화에도 잘 적응하는 편이다", "P", "J"],
+      ["마감 전에 일을 미리 끝내려 한다", "J", "P"],
+      ["마감 직전에 더 집중이 잘 된다", "P", "J"],
+      ["예측 가능한 일이 좋다", "J", "P"],
+      ["새로운 기회가 있으면 계획을 바꾼다", "P", "J"]
+    ];
+
+    const coreQuestions = {
+      "의사소통": "다른 사람의 이야기를 잘 듣고 내 생각을 잘 표현할 수 있다",
+      "창의적혁신": "새로운 아이디어를 자주 떠올리고 실천한다",
+      "자신감": "나는 내가 하는 일에 대해 자신감이 있다",
+      "협력": "다른 사람과 함께 일하는 것이 즐겁다",
+      "비판적사고": "정보를 분석하고 평가하는 것을 좋아한다",
+      "콘텐츠": "디지털 도구를 사용해 자료를 잘 만들 수 있다"
+    };
+
+    const careers = {
+      "ISTJ": ["회계사", "행정공무원", "데이터 분석가", "품질관리자"],
+      "ENFP": ["광고기획자", "콘텐츠 크리에이터", "홍보 전문가", "브랜드 매니저"],
+      "INFJ": ["심리상담사", "작가", "인권 활동가", "교육 컨설턴트"],
+      "ESTP": ["마케터", "영업사원", "이벤트 플래너", "기획자"]
+    };
+
+    const hobbyTips = {
+      "그림 그리기": "매일 10분씩 일기처럼 그림을 그려보세요.",
+      "게임하기": "퍼즐이나 전략 게임으로 사고력을 키워보세요.",
+      "운동": "매일 20분 걷기나 스트레칭으로 꾸준함을 기르세요.",
+      "요리": "주 2회 요리하며 레시피 기록을 습관화하세요.",
+      "음악 듣기": "음악을 들으며 감정일기를 써보세요.",
+      "글쓰기": "하루에 한 문장씩 기록해보며 생각을 정리하세요.",
+      "등산": "주말마다 산책 또는 트레킹으로 자신감을 쌓아보세요.",
+      "자기계발 독서": "성장 마인드를 키울 수 있는 책을 읽어보세요.",
+      "토론 모임": "친구들과 주제를 정해 이야기해보세요.",
+      "스피치 훈련": "간단한 발표 주제로 연습해보세요.",
+      "보드게임": "친구들과 팀워크를 발휘할 수 있어요.",
+      "봉사활동": "협력심과 공감능력을 함께 키울 수 있어요.",
+      "DIY 공예": "창의적인 아이디어를 실물로 표현해보세요.",
+      "사진 찍기": "매일 다른 시선으로 세상을 기록해보세요.",
+      "추리소설 읽기": "사건을 분석하고 예측하는 연습이 돼요.",
+      "디베이트 참여": "논리적으로 말하고 듣는 힘을 키워보세요.",
+      "영상 편집": "기초 앱으로 짧은 영상을 만들어보세요.",
+      "블로그 운영": "관심 주제를 꾸준히 정리해보세요."
+    };
+
+    const hobbyMatch = {
+      "자신감": ["운동", "등산", "자기계발 독서"],
+      "의사소통": ["글쓰기", "토론 모임", "스피치 훈련"],
+      "협력": ["요리", "보드게임", "봉사활동"],
+      "창의적혁신": ["그림 그리기", "DIY 공예", "사진 찍기"],
+      "비판적사고": ["게임하기", "추리소설 읽기", "디베이트 참여"],
+      "콘텐츠": ["음악 듣기", "영상 편집", "블로그 운영"]
+    };
+
+    const educationTips = {
+      "자신감": "작은 성공을 기록하며 성취감을 쌓는 활동을 해보세요.",
+      "의사소통": "친구와 발표 연습이나 토론 활동을 추천합니다.",
+      "협력": "팀 프로젝트에 참여해 역할을 나눠보세요.",
+      "창의적혁신": "창의적인 취미나 메이커 활동을 시도해 보세요.",
+      "비판적사고": "뉴스나 기사에 대해 비평하는 습관을 가져보세요.",
+      "콘텐츠": "간단한 영상 편집이나 카드뉴스 만들기를 시도해 보세요."
+    };
+
+    let mbtiScore = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+    let coreScore = { "의사소통": 0, "창의적혁신": 0, "자신감": 0, "협력": 0, "비판적사고": 0, "콘텐츠": 0 };
+
+    let currentIndex = 0;
+    let stage = 'mbti';
+    const keys = Object.keys(coreQuestions);
+
+    function renderQuestion() {
+      const app = document.getElementById("app");
+      app.innerHTML = '';
+      if (stage === 'mbti' && currentIndex < mbtiQuestions.length) {
+        const q = mbtiQuestions[currentIndex];
+        app.innerHTML = `<div class="question"><strong>[${currentIndex+1}/40]</strong> ${q[0]}</div>
+        <button onclick="answerMBTI(true)">그렇다</button>
+        <button onclick="answerMBTI(false)">아니다</button>`;
+      } else if (stage === 'core' && currentIndex < keys.length) {
+        const key = keys[currentIndex];
+        app.innerHTML = `<div class="question"><strong>[${currentIndex+1}/6]</strong> ${coreQuestions[key]}</div>
+        <button onclick="answerCore(true)">그렇다</button>
+        <button onclick="answerCore(false)">아니다</button>`;
+      } else {
+        showResult();
+      }
+    }
+
+    function answerMBTI(isYes) {
+      const q = mbtiQuestions[currentIndex];
+      if (isYes) mbtiScore[q[1]]++;
+      else mbtiScore[q[2]]++;
+      currentIndex++;
+      if (currentIndex >= mbtiQuestions.length) {
+        stage = 'core';
+        currentIndex = 0;
+      }
+      renderQuestion();
+    }
+
+    function answerCore(isYes) {
+      const key = keys[currentIndex];
+      if (isYes) coreScore[key]++;
+      currentIndex++;
+      renderQuestion();
+    }
+
+    function showResult() {
+      const mbti = (mbtiScore.E >= mbtiScore.I ? 'E' : 'I') +
+                   (mbtiScore.S >= mbtiScore.N ? 'S' : 'N') +
+                   (mbtiScore.T >= mbtiScore.F ? 'T' : 'F') +
+                   (mbtiScore.J >= mbtiScore.P ? 'J' : 'P');
+
+      let best = keys[0], worst = keys[0];
+      for (let k of keys) {
+        if (coreScore[k] > coreScore[best]) best = k;
+        if (coreScore[k] < coreScore[worst]) worst = k;
+      }
+
+      const jobList = careers[mbti] || ['교사', '개발자', '컨설턴트'];
+      const jobText = jobList.slice(0, 3).join(", ");
+
+      const hobbies = hobbyMatch[worst] || [];
+      const selectedHobbies = hobbies.sort(() => 0.5 - Math.random()).slice(0, 2);
+      const hobbyTipsText = selectedHobbies.map(h => `<li><strong>${h}:</strong> ${hobbyTips[h] || ''}</li>`).join("");
+
+      const app = document.getElementById("app");
+      app.innerHTML = `<h2>검사 결과</h2>
+        <p><strong>MBTI 유형:</strong> ${mbti}</p>
+        <p><strong>추천 직업:</strong> ${jobText}</p>
+        <p><strong>잘 발달된 역량:</strong> ${best}</p>
+        <p><strong>부족한 역량:</strong> ${worst}</p>
+        <p><strong>교사가 해줄 수 있는 교육법:</strong> ${educationTips[worst]}</p>
+        <p><strong>추천 취미:</strong></p><ul>${hobbyTipsText}</ul>`;
+    }
+
+    renderQuestion();
+  </script>
+</body>
+</html>
